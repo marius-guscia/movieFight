@@ -15,19 +15,26 @@ const fetchData = async (searchTerm) => {
 
 const input = document.querySelector('input');
 
-// Delayed search inquiry / DEBOUNCING AN INPUT
+// Delayed search inquiry function / DEBOUNCING AN INPUT
 
-let timeoutId;
+const debounce = (callback, delay = 1000) => {
+    let timeoutId;
+    return (...args) => {
+        if (timeoutId) {
+            clearTimeout(timeoutId);
+        }
+        timeoutId = setTimeout(() => {
+            callback.apply(null, args);
+        }, delay);
+    };
+};
+
+// Fetching data on user input
 
 const onInput = event => {
-    if (timeoutId) {
-        clearTimeout(timeoutId);
-    }
-    timeoutId = setTimeout(() => {
-        fetchData(event.target.value);
-    }, 1000);
+    fetchData(event.target.value);
 };
 
 // Listening for input changes.
 
-input.addEventListener('input', onInput);
+input.addEventListener('input', debounce(onInput, 500));
